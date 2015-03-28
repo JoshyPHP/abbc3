@@ -98,6 +98,7 @@ class listener implements EventSubscriberInterface
 
 			// text_formatter events
 			'core.text_formatter_s9e_parser_setup'		=> 's9e_allow_custom_bbcodes',
+			'core.text_formatter_s9e_renderer_setup'	=> 's9e_renderer_setup',
 		);
 	}
 
@@ -225,5 +226,24 @@ class listener implements EventSubscriberInterface
 				$service->disable_bbcode($bbcode_name);
 			}
 		}
+	}
+
+	/**
+	 * Set template parameters during s9e\TextFormatter renderer setup
+	 *
+	 * @param object $event The event object
+	 * @return null
+	 * @access public
+	 */
+	public function s9e_renderer_setup($event)
+	{
+		/** @var $service \phpbb\textformatter\s9e\renderer object from the text_formatter.renderer service */
+		$service = $event['renderer'];
+		$renderer = $service->get_renderer();
+		list($width, $height) = $this->bbcodes_parser->get_default_bbvideo_dimensions();
+		$renderer->setParameters(array(
+			'BBVIDEO_HEIGHT' => $height,
+			'BBVIDEO_WIDTH'  => $width,
+		));
 	}
 }

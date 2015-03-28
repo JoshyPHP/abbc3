@@ -150,8 +150,22 @@ class v310_m4_install_data extends \vse\abbc3\migrations_bbcode_base
 		),
 		'BBvideo' => array(
 			'bbcode_helpline'	=> 'ABBC3_BBVIDEO_HELPLINE',
-			'bbcode_match'		=> '[BBvideo={NUMBER1},{NUMBER2}]{URL}[/BBvideo]',
-			'bbcode_tpl'		=> '<a href="{URL}" class="bbvideo" data-bbvideo="{NUMBER1},{NUMBER2}" target="_blank">{URL}</a>',
+			'bbcode_match'		=> '[BBvideo={NUMBER1},{NUMBER2} width={NUMBER1;optional} height={NUMBER2;optional} url={URL;useContent}][/BBvideo]',
+			'bbcode_tpl'		=>
+				'<a href="{@url}" class="bbvideo" target="_blank">
+					<xsl:attribute name="data-bbvideo">
+						<xsl:choose>
+							<xsl:when test="@width"><xsl:value-of select="@width"/></xsl:when>
+							<xsl:otherwise><xsl:value-of select="$BBVIDEO_WIDTH"/></xsl:otherwise>
+						</xsl:choose>
+						<xsl:text>,</xsl:text>
+						<xsl:choose>
+							<xsl:when test="@height"><xsl:value-of select="@height"/></xsl:when>
+							<xsl:otherwise><xsl:value-of select="$BBVIDEO_HEIGHT"/></xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>
+					<xsl:value-of select="@url"/>
+				</a>',
 		),
 		'youtube' => array(
 			'bbcode_helpline'	=> 'ABBC3_YOUTUBE_HELPLINE',

@@ -40,6 +40,17 @@ class bbcodes_parser
 	}
 
 	/**
+	 * Get the default width and height values of bbvideo
+	 *
+	 * @return string[]
+	 * @access public
+	 */
+	public function get_default_bbvideo_dimensions()
+	{
+		return array($this->bbvideo_width, $this->bbvideo_height);
+	}
+
+	/**
 	 * Pre-Parser for special custom BBCodes created by ABBC3
 	 *
 	 * @param string $text The text to parse
