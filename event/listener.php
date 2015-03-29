@@ -243,8 +243,8 @@ class listener implements EventSubscriberInterface
 		$renderer = $service->get_renderer();
 		list($width, $height) = $this->bbcodes_parser->get_default_bbvideo_dimensions();
 		$renderer->setParameters(array(
-			'BBVIDEO_HEIGHT' => $height,
-			'BBVIDEO_WIDTH'  => $width,
+			'ABBC3_BBVIDEO_HEIGHT' => $height,
+			'ABBC3_BBVIDEO_WIDTH'  => $width,
 		));
 	}
 
@@ -271,12 +271,12 @@ class listener implements EventSubscriberInterface
 				<xsl:attribute name="data-bbvideo">
 					<xsl:choose>
 						<xsl:when test="@width"><xsl:value-of select="@width"/></xsl:when>
-						<xsl:otherwise><xsl:value-of select="$BBVIDEO_WIDTH"/></xsl:otherwise>
+						<xsl:otherwise><xsl:value-of select="$ABBC3_BBVIDEO_WIDTH"/></xsl:otherwise>
 					</xsl:choose>
 					<xsl:text>,</xsl:text>
 					<xsl:choose>
 						<xsl:when test="@height"><xsl:value-of select="@height"/></xsl:when>
-						<xsl:otherwise><xsl:value-of select="$BBVIDEO_HEIGHT"/></xsl:otherwise>
+						<xsl:otherwise><xsl:value-of select="$ABBC3_BBVIDEO_HEIGHT"/></xsl:otherwise>
 					</xsl:choose>
 				</xsl:attribute>
 				<xsl:value-of select="@url"/>
