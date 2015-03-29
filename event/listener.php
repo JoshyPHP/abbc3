@@ -97,6 +97,7 @@ class listener implements EventSubscriberInterface
 			'core.modify_bbcode_init'					=> 'allow_custom_bbcodes', // Deprecated 3.2.x. Provides bc for 3.1.x.
 
 			// text_formatter events
+			'core.text_formatter_s9e_configure_after'	=> 's9e_create_bbvideo',
 			'core.text_formatter_s9e_parser_setup'		=> 's9e_allow_custom_bbcodes',
 			'core.text_formatter_s9e_renderer_setup'	=> 's9e_renderer_setup',
 		);
@@ -245,5 +246,41 @@ class listener implements EventSubscriberInterface
 			'BBVIDEO_HEIGHT' => $height,
 			'BBVIDEO_WIDTH'  => $width,
 		));
+	}
+
+	/**
+	 * Create the BBvideo BBCode during s9e\TextFormatter configuration
+	 *
+	 * @param object $event The event object
+	 * @return null
+	 * @access public
+	 */
+	public function s9e_create_bbvideo($event)
+	{
+		/** @var $configurator \s9e\TextFormatter\Configurator */
+		$configurator = $event['configurator'];
+		unset($configurator->BBCodes['bbvideo']);
+		unset($configurator->tags['bbvideo']);
+		$configurator->BBCodes->addCustom(
+			'[BBvideo={NUMBER1},{NUMBER2}
+				width={NUMBER1;optional}
+				height={NUMBER2;optional}
+				url={URL;useContent}
+			]',
+			'<a href="{@url}" class="bbvideo" target="_blank">
+				<xsl:attribute name="data-bbvideo">
+					<xsl:choose>
+						<xsl:when test="@width"><xsl:value-of select="@width"/></xsl:when>
+						<xsl:otherwise><xsl:value-of select="$BBVIDEO_WIDTH"/></xsl:otherwise>
+					</xsl:choose>
+					<xsl:text>,</xsl:text>
+					<xsl:choose>
+						<xsl:when test="@height"><xsl:value-of select="@height"/></xsl:when>
+						<xsl:otherwise><xsl:value-of select="$BBVIDEO_HEIGHT"/></xsl:otherwise>
+					</xsl:choose>
+				</xsl:attribute>
+				<xsl:value-of select="@url"/>
+			</a>'
+		);
 	}
 }
