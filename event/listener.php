@@ -97,7 +97,7 @@ class listener implements EventSubscriberInterface
 			'core.modify_bbcode_init'					=> 'allow_custom_bbcodes', // Deprecated 3.2.x. Provides bc for 3.1.x.
 
 			// text_formatter events
-			'core.text_formatter_s9e_configure_after'	=> 's9e_create_bbvideo',
+			'core.text_formatter_s9e_configure_after'	=> 's9e_create_bbcodes',
 			'core.text_formatter_s9e_parser_setup'		=> 's9e_allow_custom_bbcodes',
 			'core.text_formatter_s9e_renderer_setup'	=> 's9e_renderer_setup',
 		);
@@ -245,17 +245,19 @@ class listener implements EventSubscriberInterface
 		$renderer->setParameters(array(
 			'ABBC3_BBVIDEO_HEIGHT' => $height,
 			'ABBC3_BBVIDEO_WIDTH'  => $width,
+			'S_IS_BOT'             => $this->user->data['is_bot'],
+			'S_USER_LOGGED_IN'     => ($this->user->data['user_id'] != ANONYMOUS),
 		));
 	}
 
 	/**
-	 * Create the BBvideo BBCode during s9e\TextFormatter configuration
+	 * Create the BBvideo and hidden BBCodes during s9e\TextFormatter configuration
 	 *
 	 * @param object $event The event object
 	 * @return null
 	 * @access public
 	 */
-	public function s9e_create_bbvideo($event)
+	public function s9e_create_bbcodes($event)
 	{
 		/** @var $configurator \s9e\TextFormatter\Configurator */
 		$configurator = $event['configurator'];
@@ -281,6 +283,25 @@ class listener implements EventSubscriberInterface
 				</xsl:attribute>
 				<xsl:value-of select="@url"/>
 			</a>'
+		);
+		unset($configurator->BBCodes['hidden']);
+		unset($configurator->tags['hidden']);
+		$configurator->BBCodes->addCustom(
+			'[hidden]{TEXT}[/hidden]',
+			'<xsl:choose>
+				<xsl:when test="$S_USER_LOGGED_IN and not($S_IS_BOT)">
+					<div class="hidebox hidebox_visible">
+						<div class="hidebox_title hidebox_visible">{L_ABBC3_HIDDEN_OFF}</div>
+						<div class="hidebox_visible">{TEXT}</div>
+					</div>
+				</xsl:when>
+				<xsl:otherwise>
+					<div class="hidebox hidebox_hidden">
+						<div class="hidebox_title hidebox_hidden">{L_ABBC3_HIDDEN_ON}</div>
+						<div class="hidebox_hidden">{L_ABBC3_HIDDEN_EXPLAIN}</div>
+					</div>
+				</xsl:otherwise>
+			</xsl:choose>'
 		);
 	}
 }
