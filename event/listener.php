@@ -245,8 +245,6 @@ class listener implements EventSubscriberInterface
 		$renderer->setParameters(array(
 			'ABBC3_BBVIDEO_HEIGHT' => $height,
 			'ABBC3_BBVIDEO_WIDTH'  => $width,
-			'S_IS_BOT'             => $this->user->data['is_bot'],
-			'S_USER_LOGGED_IN'     => ($this->user->data['user_id'] != ANONYMOUS),
 		));
 	}
 
